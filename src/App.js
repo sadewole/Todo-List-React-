@@ -10,13 +10,22 @@ class App extends Component {
     items: [],
     id: uuid(),
     item: '',
-    editItem: false
+    editItem: false,
+    isEmpty: true
   };
 
   handleChange = e => {
-    this.setState({
-      item: e.target.value
-    });
+    if (e.target.value.length > 0) {
+      this.setState({
+        item: e.target.value,
+        isEmpty: false
+      });
+    } else {
+      this.setState({
+        item: e.target.value,
+        isEmpty: true
+      });
+    }
   };
 
   handleSubmit = e => {
@@ -33,7 +42,8 @@ class App extends Component {
       items: updatedItem,
       item: '',
       id: uuid(),
-      editItem: false
+      editItem: false,
+      isEmpty: true
     });
   };
 
@@ -51,6 +61,20 @@ class App extends Component {
     });
   };
 
+  handleEdit = id => {
+    const filteredDelete = this.state.items.filter(item => item.id !== id);
+
+    const selectItem = this.state.items.find(item => item.id === id);
+
+    this.setState({
+      items: filteredDelete,
+      item: selectItem.title,
+      id,
+      editItem: true,
+      isEmpty: false
+    });
+  };
+
   render() {
     return (
       <div className='container'>
@@ -61,11 +85,14 @@ class App extends Component {
               item={this.state.item}
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
+              editItem={this.state.editItem}
+              isEmpty={this.state.isEmpty}
             />
             <TodoList
               items={this.state.items}
               clearList={this.clearList}
               handleDelete={this.handleDelete}
+              handleEdit={this.handleEdit}
             />
           </div>
         </div>
